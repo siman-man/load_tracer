@@ -1,0 +1,1 @@
+autoload :Bar, './lib/bar'
