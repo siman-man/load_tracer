@@ -38,6 +38,18 @@ end
 pp report
 ```
 
+### dot format
+
+```ruby
+require 'load_tracer'
+
+puts LoadTracer.trace(format: :dot) { require 'prime' }
+```
+
+```
+ruby example.rb | dot -Tpng -o example.png | open example.png
+```
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
