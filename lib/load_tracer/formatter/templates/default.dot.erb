@@ -1,0 +1,6 @@
+digraph file_dependencies {
+  graph [ dpi = 200 ]
+<%- graph_edges.each do |edge| %>
+  <%= %Q("#{edge.first}" -> "#{edge.last}") -%>
+<% end %>
+}

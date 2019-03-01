@@ -48,5 +48,20 @@ RSpec.describe LoadTracer do
 
       expect(file_names(fs1.dependencies)).to eq(['pp.rb'])
     end
+
+    it 'export dot format' do
+      result = LoadTracer.trace(format: :dot) { require_relative 'samples/dot_format_test' }
+
+      expect = <<~DOT.chomp
+        digraph file_dependencies {
+          graph [ dpi = 200 ]
+
+          "load_tracer_spec.rb" -> "dot_format_test.rb"
+          "dot_format_test.rb" -> "foo.rb"
+        }
+      DOT
+
+      expect(result).to eq(expect)
+    end
   end
 end

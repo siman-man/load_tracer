@@ -1,5 +1,6 @@
 require 'binding_of_caller'
 require 'load_tracer/formatter/default'
+require 'load_tracer/formatter/dot'
 require 'load_tracer/version'
 
 module Kernel
@@ -80,6 +81,9 @@ class LoadTracer
   def report(format:)
     case format
     when :dot
+      DotFormatter.export(
+        dependencies: @dependencies
+      )
     else
       DefaultFormatter.export(
         dependencies: @dependencies,
