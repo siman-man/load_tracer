@@ -51,6 +51,7 @@ class LoadTracer
   def initialize
     @dependencies = Hash.new { |hash, key| hash[key] = [] }
     @reverse_dependencies = Hash.new { |hash, key| hash[key] = [] }
+    @not_found_features = []
   end
 
   def tracer
@@ -70,7 +71,10 @@ class LoadTracer
 
         path = find_path(feature) || find_path(File.expand_path(feature, File.dirname(bl.path)))
 
-        raise LoadError.new("cannot load such file -- #{feature}") if path.nil?
+        if path.nil?
+          @not_found_features << feature
+          next
+        end
 
         @dependencies[bl.absolute_path] << path
         @reverse_dependencies[path] << bl.absolute_path
