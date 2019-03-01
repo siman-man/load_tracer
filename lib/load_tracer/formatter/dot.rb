@@ -43,12 +43,11 @@ class LoadTracer
 
       @dependencies.each do |from, deps|
         label1 = File.basename(from)
+        @_duplicate_names << label1 if checked[label1]
+        checked[label1] = true
 
         deps.each do |to|
           label2 = File.basename(to)
-
-          @_duplicate_names << label1 if checked[label1]
-          checked[label1] = true
 
           @_duplicate_names << label2 if label1 == label2
         end
