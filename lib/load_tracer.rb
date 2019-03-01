@@ -60,8 +60,12 @@ class LoadTracer
       case tp.event
       when :call
         bl = caller_locations[1]
-
         feature = get_feature(tp)
+
+        if bl.absolute_path.nil?
+          bl = find_caller_of_internal_library(feature)
+        end
+
         path = find_path(feature) || find_path(File.expand_path(feature, File.dirname(bl.path)))
 
         raise LoadError.new("cannot load such file -- #{feature}") if path.nil?
@@ -117,5 +121,10 @@ class LoadTracer
     RubyVM.resolve_feature_path(feature).last
   rescue LoadError
     nil
+  end
+
+  def find_caller_of_internal_library(feature)
+    index = caller_locations.find_index { |bl| bl.base_label == feature && bl.path == '<internal:prelude>' }
+    caller_locations[index + 1]
   end
 end

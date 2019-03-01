@@ -41,5 +41,12 @@ RSpec.describe LoadTracer do
       expect(file_names(fs1.dependencies)).to eq(['bar.rb'])
       expect(file_names(fs2.reverse_dependencies)).to eq(['autoload_test.rb'])
     end
+
+    it 'auto require `pp`' do
+      result = LoadTracer.trace { require_relative 'samples/internal_library_test' }
+      fs1 = result.find { |fs| fs.name == 'internal_library_test.rb' }
+
+      expect(file_names(fs1.dependencies)).to eq(['pp.rb'])
+    end
   end
 end
