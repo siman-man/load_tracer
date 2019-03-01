@@ -66,8 +66,8 @@ class LoadTracer
 
         raise LoadError.new("cannot load such file -- #{feature}") if path.nil?
 
-        @dependencies[bl.path] << path
-        @reverse_dependencies[path] << bl.path
+        @dependencies[bl.absolute_path] << path
+        @reverse_dependencies[path] << bl.absolute_path
       end
     end
   end
