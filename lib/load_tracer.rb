@@ -78,6 +78,7 @@ class LoadTracer
         name: File.basename(path),
         path: path,
         dependencies: deps,
+        reverse_dependencies: [],
       )
     end
 
@@ -89,7 +90,7 @@ class LoadTracer
           name: File.basename(path),
           path: path,
           dependencies: [],
-          reverse_dependencies: rdeps
+          reverse_dependencies: rdeps,
         )
       else
         fs.reverse_dependencies = rdeps

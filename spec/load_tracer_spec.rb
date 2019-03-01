@@ -4,9 +4,11 @@ RSpec.describe LoadTracer do
       result = LoadTracer.trace { require_relative 'samples/require_test' }
       fs1 = result.find { |fs| fs.name == 'require_test.rb' }
       fs2 = result.find { |fs| fs.name == 'set.rb' }
+      fs3 = result.find { |fs| fs.name == 'load_tracer_spec.rb' }
 
       expect(file_names(fs1.dependencies)).to eq(['set.rb'])
       expect(file_names(fs2.reverse_dependencies)).to eq(['require_test.rb'])
+      expect(fs3.reverse_dependencies).to eq([])
     end
 
     it 'require_relative' do
