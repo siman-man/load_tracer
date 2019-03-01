@@ -6,6 +6,12 @@ require `RUBY_VERSION` >= 2.7.0
 
 ## Installation
 
+```
+gem install load_tracer
+```
+
+### build local
+
 clone this repository.
 
 ```
@@ -21,7 +27,7 @@ bundle exec rake build
 install gem.
 
 ```
-gem install pkg/load_tracer-0.1.0.gem
+gem install pkg/load_tracer-0.2.0.gem
 ```
 
 
@@ -49,6 +55,8 @@ puts LoadTracer.trace(format: :dot) { require 'prime' }
 ```
 ruby example.rb | dot -Tpng -o example.png | open example.png
 ```
+
+![](images/example.png)
 
 ## License
 
