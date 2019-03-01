@@ -1,4 +1,5 @@
 require 'binding_of_caller'
+require 'load_tracer/formatter/default'
 require 'load_tracer/version'
 
 module Kernel
@@ -40,10 +41,10 @@ class LoadTracer
 
   LOAD_METHODS = %i(require require_relative load autoload)
 
-  def self.trace
+  def self.trace(format: nil)
     instance = new
     instance.tracer.enable { yield }
-    instance.report
+    instance.report(format: format)
   end
 
   def initialize
@@ -76,37 +77,15 @@ class LoadTracer
     end
   end
 
-  def report
-    file_specs = @dependencies.map do |path, deps|
-      FileSpec.new(
-        name: File.basename(path),
-        path: path,
-        dependencies: deps,
-        reverse_dependencies: [],
+  def report(format:)
+    case format
+    when :dot
+    else
+      DefaultFormatter.export(
+        dependencies: @dependencies,
+        reverse_dependencies: @reverse_dependencies
       )
     end
-
-    @reverse_dependencies.each do |path, rdeps|
-      fs = file_specs.find { |fs| fs.path == path }
-
-      if fs.nil?
-        file_specs << FileSpec.new(
-          name: File.basename(path),
-          path: path,
-          dependencies: [],
-          reverse_dependencies: rdeps,
-        )
-      else
-        fs.reverse_dependencies = rdeps
-      end
-    end
-
-    file_specs.each do |fs|
-      fs.dependencies.sort!.uniq!
-      fs.reverse_dependencies.sort!.uniq!
-    end
-
-    file_specs
   end
 
   private
