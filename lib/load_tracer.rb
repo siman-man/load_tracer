@@ -101,6 +101,11 @@ class LoadTracer
       end
     end
 
+    file_specs.each do |fs|
+      fs.dependencies.sort!.uniq!
+      fs.reverse_dependencies.sort!.uniq!
+    end
+
     file_specs
   end
 
