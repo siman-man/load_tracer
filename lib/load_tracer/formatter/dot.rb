@@ -1,4 +1,5 @@
 require 'erb'
+require 'pathname'
 
 class LoadTracer
   class DotFormatter
@@ -20,15 +21,45 @@ class LoadTracer
     private
 
     def graph_edges
-      edges = []
+      @dependencies.flat_map do |from, deps|
+        label1 = File.basename(from)
+
+        deps.map do |to|
+          label2 = File.basename(to)
+
+          [
+            duplicated_label_names.include?(label1) ? node_label(from) : label1,
+            duplicated_label_names.include?(label2) ? node_label(to) : label2,
+          ]
+        end
+      end.sort_by(&:first).uniq
+    end
+
+    def duplicated_label_names
+      return @_duplicate_names if @_duplicate_names
+
+      checked = Hash.new
+      @_duplicate_names = []
 
       @dependencies.each do |from, deps|
+        label1 = File.basename(from)
+
         deps.each do |to|
-          edges << [File.basename(from), File.basename(to)]
+          label2 = File.basename(to)
+
+          @_duplicate_names << label1 if checked[label1]
+          checked[label1] = true
+
+          @_duplicate_names << label2 if label1 == label2
         end
       end
 
-      edges.sort_by(&:first).uniq
+      @_duplicate_names
+    end
+
+    def node_label(absolute_path)
+      s, _, t = Pathname.new(absolute_path).ascend.take(3)
+      s.relative_path_from(t).to_s
     end
   end
 end
