@@ -54,6 +54,7 @@ class LoadTracer
         end
       end
 
+      @_duplicate_names.uniq!
       @_duplicate_names
     end
 
