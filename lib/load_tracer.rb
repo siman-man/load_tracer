@@ -4,22 +4,18 @@ require 'load_tracer/version'
 module Kernel
   unless defined?(__original_require__)
     alias __original_require__ require
-    private :__original_require__
   end
 
   unless defined?(__original_require_relative__)
     alias __original_require_relative__ require_relative
-    private :__original_require_relative__
   end
 
   unless defined?(__original_load__)
     alias __original_load__ load
-    private :__original_load__
   end
 
   unless defined?(__original_autoload__)
     alias __original_autoload__ autoload
-    private :__original_autoload__
   end
 
   def require(feature)
