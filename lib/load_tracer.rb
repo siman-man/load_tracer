@@ -54,13 +54,13 @@ class LoadTracer
   end
 
   def tracer
-    TracePoint.new(:call) do |tp|
+    TracePoint.new(:return) do |tp|
       next unless LOAD_METHODS.include?(tp.method_id)
       next if tp.defined_class != ::Kernel
       next if tp.path != __FILE__
 
       case tp.event
-      when :call
+      when :return
         bl = caller_locations[1]
         feature = get_feature(tp)
 

@@ -56,8 +56,8 @@ RSpec.describe LoadTracer do
         digraph file_dependencies {
           graph [ dpi = 200 ]
 
-          "load_tracer_spec.rb" -> "dot_format_test.rb"
           "dot_format_test.rb" -> "foo.rb"
+          "load_tracer_spec.rb" -> "dot_format_test.rb"
         }
       DOT
 

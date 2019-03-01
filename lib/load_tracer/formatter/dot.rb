@@ -28,7 +28,7 @@ class LoadTracer
         end
       end
 
-      edges.uniq
+      edges.sort_by(&:first).uniq
     end
   end
 end
