@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    load_tracer (0.1.0)
+    load_tracer (0.2.0)
       binding_of_caller (~> 0.8.0)
 
 GEM
