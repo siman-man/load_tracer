@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+require 'load_tracer'
+require 'optparse'
+
+options = { format: :json }
+
+OptionParser.new do |opt|
+  opt.banner = 'Usage: rutrace programfile'
+  opt.on('-f', '-f format', 'specify output format.') { |format| options[:format] = format.to_sym }
+
+  opt.parse!(ARGV)
+end
+
+if ARGV.first.nil?
+  puts opt_parse
+else
+  path = File.expand_path(ARGV.first, Dir.pwd)
+
+  LoadTracer.trace(format: options[:format]) { require_relative path }
+end
