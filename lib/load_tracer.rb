@@ -1,6 +1,7 @@
 require 'binding_of_caller'
 require 'load_tracer/formatter/default'
 require 'load_tracer/formatter/dot'
+require 'load_tracer/formatter/json'
 require 'load_tracer/version'
 
 module Kernel
@@ -87,6 +88,11 @@ class LoadTracer
     when :dot
       DotFormatter.export(
         dependencies: @dependencies
+      )
+    when :json
+      JsonFormatter.export(
+        dependencies: @dependencies,
+        reverse_dependencies: @reverse_dependencies
       )
     else
       DefaultFormatter.export(

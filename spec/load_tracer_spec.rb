@@ -63,5 +63,11 @@ RSpec.describe LoadTracer do
 
       expect(result).to eq(expect)
     end
+
+    it 'export json format' do
+      result = JSON.parse(LoadTracer.trace(format: :json) { require_relative 'samples/json_format_test' })
+
+      expect(result[0]['name']).to eq('bar.rb')
+    end
   end
 end
