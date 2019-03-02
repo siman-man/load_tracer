@@ -27,7 +27,7 @@ bundle exec rake build
 install gem.
 
 ```
-gem install pkg/load_tracer-0.2.0.gem
+gem install pkg/load_tracer-0.3.0.gem
 ```
 
 

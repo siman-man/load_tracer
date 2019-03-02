@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors = ['Shuichi Tamayose']
   spec.email = ['tmshuichi@gmail.com']
 
-  spec.summary = %q{TBD}
-  spec.description = %q{TBD}
+  spec.summary = %q{This gem can check the dependency files.}
+  spec.description = %q{This gem can check the dependency files.}
   spec.homepage = 'https://github.com/siman-man/load_tracer'
   spec.license = 'MIT'
   spec.required_ruby_version = '> 2.6.99'
