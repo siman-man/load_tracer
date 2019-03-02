@@ -27,9 +27,9 @@ RSpec.describe LoadTracer do
     it 'load' do
       result = LoadTracer.trace { require_relative 'samples/load_test' }
       fs1 = result.find { |fs| fs.name == 'load_test.rb' }
-      fs2 = result.find { |fs| fs.name == 'ostruct.rb' }
+      fs2 = result.find { |fs| fs.name == 'foo.rb' }
 
-      expect(file_names(fs1.dependencies)).to eq(['ostruct.rb'])
+      expect(file_names(fs1.dependencies)).to eq(['foo.rb'])
       expect(file_names(fs2.reverse_dependencies)).to eq(['load_test.rb'])
     end
 
