@@ -5,7 +5,7 @@ require 'optparse'
 
 options = { format: :json }
 
-OptionParser.new do |opt|
+opt_parse = OptionParser.new do |opt|
   opt.banner = 'Usage: rutrace programfile'
   opt.on('-f', '-f format', 'specify output format.') { |format| options[:format] = format.to_sym }
 
@@ -17,5 +17,5 @@ if ARGV.first.nil?
 else
   path = File.expand_path(ARGV.first, Dir.pwd)
 
-  LoadTracer.trace(format: options[:format]) { require_relative path }
+  puts LoadTracer.trace(format: options[:format], exclude_files: ['rutrace']) { require_relative path }
 end

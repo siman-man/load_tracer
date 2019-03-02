@@ -43,15 +43,16 @@ class LoadTracer
 
   LOAD_METHODS = %i(require require_relative load autoload)
 
-  def self.trace(format: nil)
-    instance = new
+  def self.trace(format: nil, exclude_files: [])
+    instance = new(exclude_files: exclude_files)
     instance.tracer.enable { yield }
     instance.report(format: format)
   end
 
-  def initialize
+  def initialize(exclude_files: [])
     @dependencies = Hash.new { |hash, key| hash[key] = [] }
     @reverse_dependencies = Hash.new { |hash, key| hash[key] = [] }
+    @exclude_files = exclude_files
     @not_found_features = []
   end
 
@@ -69,6 +70,8 @@ class LoadTracer
         if bl.absolute_path.nil?
           bl = find_caller_of_internal_library(feature)
         end
+
+        next if @exclude_files.include?(File.basename(bl.absolute_path))
 
         path = find_path(feature) || find_path(File.expand_path(feature, File.dirname(bl.path)))
 
