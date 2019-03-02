@@ -57,32 +57,29 @@ class LoadTracer
   end
 
   def tracer
-    TracePoint.new(:return) do |tp|
+    TracePoint.new(:call) do |tp|
       next unless LOAD_METHODS.include?(tp.method_id)
       next if tp.defined_class != ::Kernel
       next if tp.path != __FILE__
 
-      case tp.event
-      when :return
-        bl = caller_locations[1]
-        feature = get_feature(tp)
+      bl = caller_locations[1]
+      feature = get_feature(tp)
 
-        if bl.absolute_path.nil?
-          bl = find_caller_of_internal_library(feature)
-        end
-
-        next if @exclude_files.include?(File.basename(bl.absolute_path))
-
-        path = find_path(feature) || find_path(File.expand_path(feature, File.dirname(bl.path)))
-
-        if path.nil?
-          @not_found_features << feature
-          next
-        end
-
-        @dependencies[bl.absolute_path] << path
-        @reverse_dependencies[path] << bl.absolute_path
+      if bl.absolute_path.nil?
+        bl = find_caller_of_internal_library(feature)
       end
+
+      next if @exclude_files.include?(File.basename(bl.absolute_path))
+
+      path = find_path(feature) || find_path(File.expand_path(feature, File.dirname(bl.path)))
+
+      if path.nil?
+        @not_found_features << feature
+        next
+      end
+
+      @dependencies[bl.absolute_path] << path
+      @reverse_dependencies[path] << bl.absolute_path
     end
   end
 
