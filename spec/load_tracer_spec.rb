@@ -49,6 +49,15 @@ RSpec.describe LoadTracer do
       expect(file_names(fs1.dependencies)).to eq(['pp.rb'])
     end
 
+    it 'already require feature' do
+      require_relative 'samples/lib/foo'
+
+      result = LoadTracer.trace { require_relative 'samples/already_require_feature_test' }
+      fs1 = result.find { |fs| fs.name == 'foo.rb' }
+
+      expect(file_names(fs1.dependencies)).to eq(['bar.rb'])
+    end
+
     it 'export dot format' do
       result = LoadTracer.trace(format: :dot) { require_relative 'samples/dot_format_test' }
 
@@ -57,6 +66,7 @@ RSpec.describe LoadTracer do
           graph [ dpi = 200 ]
 
           "dot_format_test.rb" -> "foo.rb"
+          "foo.rb" -> "bar.rb"
           "load_tracer_spec.rb" -> "dot_format_test.rb"
         }
       DOT

@@ -2,6 +2,7 @@ require 'binding_of_caller'
 require 'load_tracer/formatter/default'
 require 'load_tracer/formatter/dot'
 require 'load_tracer/formatter/json'
+require 'load_tracer/static_checker'
 require 'load_tracer/version'
 
 module Kernel
@@ -43,21 +44,27 @@ class LoadTracer
 
   LOAD_METHODS = %i(require require_relative load autoload)
 
-  def self.trace(format: nil, exclude_files: [])
-    instance = new(exclude_files: exclude_files)
-    instance.tracer.enable { yield }
-    instance.report(format: format)
+  def self.trace(format: nil, exclude_files: [], &block)
+    new(exclude_files: exclude_files).trace(format: format, &block)
   end
 
-  def initialize(exclude_files: [])
+  def initialize(format: nil, exclude_files: [])
+    @exclude_files = exclude_files
+  end
+
+  def trace(format: nil)
     @dependencies = Hash.new { |hash, key| hash[key] = [] }
     @reverse_dependencies = Hash.new { |hash, key| hash[key] = [] }
-    @exclude_files = exclude_files
+    @load_checked_features = Hash.new
     @not_found_features = []
+
+    tracer.enable { yield }
+
+    report(format: format, dependencies: @dependencies, reverse_dependencies: @reverse_dependencies)
   end
 
   def tracer
-    TracePoint.new(:call) do |tp|
+    TracePoint.new(:return) do |tp|
       next unless LOAD_METHODS.include?(tp.method_id)
       next if tp.defined_class != ::Kernel
       next if tp.path != __FILE__
@@ -78,26 +85,37 @@ class LoadTracer
         next
       end
 
+      @load_checked_features[bl.absolute_path] = true
+
       @dependencies[bl.absolute_path] << path
       @reverse_dependencies[path] << bl.absolute_path
+
+      if !tp.return_value && !@load_checked_features[path]
+        file_specs = StaticChecker.parse_file(path)
+
+        file_specs.each do |fs|
+          @dependencies[fs.path] |= fs.dependencies
+          @reverse_dependencies[fs.path] |= fs.reverse_dependencies
+        end
+      end
     end
   end
 
-  def report(format:)
+  def report(format:, dependencies:, reverse_dependencies:)
     case format
     when :dot
       DotFormatter.export(
-        dependencies: @dependencies
+        dependencies: dependencies
       )
     when :json
       JsonFormatter.export(
-        dependencies: @dependencies,
-        reverse_dependencies: @reverse_dependencies
+        dependencies: dependencies,
+        reverse_dependencies: reverse_dependencies
       )
     else
       DefaultFormatter.export(
-        dependencies: @dependencies,
-        reverse_dependencies: @reverse_dependencies
+        dependencies: dependencies,
+        reverse_dependencies: reverse_dependencies
       )
     end
   end
