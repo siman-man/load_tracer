@@ -30,10 +30,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.17.3)
+  bundler (~> 2.0)
   load_tracer!
   rake (~> 12.3.2)
   rspec (~> 3.8.0)
 
 BUNDLED WITH
-   1.17.3
+   2.0.1
