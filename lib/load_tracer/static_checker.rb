@@ -44,20 +44,20 @@ class LoadTracer
 
     private
 
-    def inspector(ast:, &block)
+    def inspect(ast:, &block)
       ast.children.each do |child|
         next unless child.instance_of?(RubyVM::AbstractSyntaxTree::Node)
 
         yield child
 
-        inspector(ast: child, &block)
+        inspect(ast: child, &block)
       end
     end
 
     def search_load_features(ast:)
       features = []
 
-      inspector(ast: ast) do |node|
+      inspect(ast: ast) do |node|
         next if node.type != :FCALL
 
         method_id = node.children[0]
