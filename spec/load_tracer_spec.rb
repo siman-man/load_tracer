@@ -7,6 +7,7 @@ RSpec.describe LoadTracer do
       fs3 = result.find { |fs| fs.name == 'load_tracer_spec.rb' }
 
       expect(file_names(fs1.dependencies)).to eq(['set.rb'])
+      expect(file_names(fs2.dependencies)).to eq(['tsort.rb'])
       expect(file_names(fs2.reverse_dependencies)).to eq(['require_test.rb'])
       expect(fs3.reverse_dependencies).to eq([])
     end
