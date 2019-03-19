@@ -1,4 +1,3 @@
-require 'binding_of_caller'
 require 'load_tracer/formatter/default'
 require 'load_tracer/formatter/dot'
 require 'load_tracer/formatter/json'
@@ -27,7 +26,9 @@ module Kernel
   end
 
   def require_relative(relative_feature)
-    binding.of_caller(1).eval("__original_require_relative__('#{relative_feature}')")
+    bl = caller_locations[0]
+    fpath = File.expand_path(relative_feature, File.dirname(bl.absolute_path))
+    __original_require__(fpath)
   end
 
   def load(file, priv = false)
@@ -78,7 +79,7 @@ class LoadTracer
 
       next if @exclude_files.include?(File.basename(bl.absolute_path))
 
-      path = find_path(feature) || find_path(File.expand_path(feature, File.dirname(bl.path)))
+      path = find_path(feature) || find_path(File.expand_path(feature, File.dirname(bl.absolute_path)))
 
       if path.nil?
         @not_found_features << feature
