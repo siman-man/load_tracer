@@ -58,6 +58,8 @@ class LoadTracer
     @reverse_dependencies = Hash.new { |hash, key| hash[key] = [] }
     @load_checked_features = Hash.new
     @not_found_features = []
+    bl = caller_locations[1]
+    @exclude_files << bl.absolute_path
 
     tracer.enable { yield }
 
@@ -77,7 +79,7 @@ class LoadTracer
         bl = find_caller_of_internal_library(feature)
       end
 
-      next if @exclude_files.include?(File.basename(bl.absolute_path))
+      next if @exclude_files.include?(bl.absolute_path)
 
       path = find_path(feature) || find_path(File.expand_path(feature, File.dirname(bl.absolute_path)))
 
