@@ -13,7 +13,7 @@ class LoadTracer
     end
 
     def export
-      graph_data = ERB.new(@template, nil, '-').result(binding)
+      graph_data = ERB.new(@template, trim_mode: '-').result(binding)
 
       graph_data.lines.map(&:rstrip).join("\n")
     end
