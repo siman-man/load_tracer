@@ -36,7 +36,7 @@ class LoadTracer
     end
 
     def duplicated_label_names
-      return @_duplicate_names if @_duplicate_names
+      return @_duplicate_names if defined?(@_duplicate_names)
 
       checked = Hash.new
       @_duplicate_names = []
