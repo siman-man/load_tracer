@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    load_tracer (0.6.0)
+    load_tracer (0.6.1)
 
 GEM
   remote: https://rubygems.org/
